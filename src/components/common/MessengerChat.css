@@ -1,0 +1,74 @@
+/* ============================================
+   MESSENGER CHAT CSS - Fixed bottom right icon
+   ============================================ */
+
+.messenger-chat {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8B5CF6, #EC4899);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+  z-index: 9999;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.messenger-chat:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 24px rgba(139, 92, 246, 0.5);
+}
+
+.messenger-chat:active {
+  transform: scale(0.95);
+}
+
+.messenger-icon {
+  color: #fff;
+  font-size: 26px;
+}
+
+/* Pulse animation */
+.messenger-chat::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8B5CF6, #EC4899);
+  z-index: -1;
+  animation: messengerPulse 2s infinite;
+}
+
+@keyframes messengerPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* === Responsive === */
+@media (max-width: 480px) {
+  .messenger-chat {
+    width: 48px;
+    height: 48px;
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .messenger-icon {
+    font-size: 22px;
+  }
+}

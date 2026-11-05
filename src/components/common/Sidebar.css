@@ -1,0 +1,241 @@
+/* ============================================
+   SIDEBAR CSS - Admin Navigation
+   ============================================ */
+
+.sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background-color: #fafafa;
+  border-right: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+/* === Header === */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.sidebar-logo-img {
+  height: 40px;
+  max-width: 140px;
+  object-fit: contain;
+  display: block;
+}
+
+.sidebar-logo-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #f5f0e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-logo-text {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--dark-navy);
+}
+
+.sidebar-logo-brand {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dark-navy);
+}
+
+.sidebar-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-icon-btn {
+  background: none;
+  border: none;
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.sidebar-icon-btn:hover {
+  background-color: #eee;
+}
+
+.sidebar-avatar-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.sidebar-avatar-icon {
+  color: #bbb;
+}
+
+/* === Menu === */
+.sidebar-menu {
+  padding: 20px 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.sidebar-menu-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 20px;
+  margin-bottom: 12px;
+}
+
+.sidebar-menu-list {
+  list-style: none;
+}
+
+.sidebar-menu-item {
+  margin-bottom: 2px;
+}
+
+.sidebar-menu-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  text-decoration: none;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-menu-link:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.sidebar-menu-link.active {
+  background-color: #e8f4fd;
+  color: var(--primary-blue);
+  border-left-color: var(--primary-blue);
+  font-weight: 600;
+}
+
+/* === Dot indicator === */
+.sidebar-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ccc;
+  flex-shrink: 0;
+  transition: background-color 0.2s;
+}
+
+.sidebar-menu-link.active .sidebar-dot {
+  background-color: var(--primary-blue);
+}
+
+.sidebar-menu-link:hover .sidebar-dot {
+  background-color: #999;
+}
+
+/* === Sidebar Footer & Logout === */
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+  margin-top: auto;
+  background-color: #fafafa;
+}
+
+.sidebar-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: 12px;
+  border: 1px solid #ffccd2;
+  background-color: #fff5f5;
+  color: #dc3545;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sidebar-logout-btn:hover {
+  background-color: #ffe6e8;
+  border-color: #f5b5ba;
+  color: #c82333;
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15);
+  transform: translateY(-1px);
+}
+
+.sidebar-logout-btn:active {
+  transform: translateY(0);
+}
+
+.sidebar-logout-icon {
+  font-size: 18px;
+}
+
+/* === Admin Layout Shared === */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.admin-main {
+  flex: 1;
+  margin-left: 260px;
+  padding: 24px 32px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* === Responsive === */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 220px;
+  }
+  .admin-main {
+    margin-left: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+  .admin-main {
+    margin-left: 0;
+    padding: 16px;
+  }
+}

@@ -1,0 +1,30 @@
+/* ============================================
+   APP CSS - Global app styles
+   ============================================ */
+
+.App {
+  min-height: 100vh;
+}
+
+/* Placeholder page cho các trang chưa phát triển */
+.placeholder-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  padding: 20px;
+}
+
+.placeholder-page h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--dark-navy);
+  margin-bottom: 8px;
+}
+
+.placeholder-page p {
+  font-size: 16px;
+  color: #999;
+}

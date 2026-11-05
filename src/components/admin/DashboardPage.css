@@ -1,0 +1,144 @@
+/* ============================================
+   DashboardPage - Trang dashboard tổng quan admin
+   ============================================ */
+
+/* Admin layout chung */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-main {
+  flex: 1;
+  margin-left: 260px;
+  padding: 24px 32px;
+  background-color: #f5f5f5;
+}
+
+/* Tiêu đề Dashboard */
+.dashboard-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--dark-navy);
+  margin-bottom: 24px;
+}
+
+/* Grid 3 cột cho stat cards */
+.stat-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* Stat Card chung */
+.stat-card {
+  border-radius: 16px;
+  padding: 24px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Gradient cho từng card */
+.stat-card--pink {
+  background: var(--gradient-pink);
+}
+
+.stat-card--blue {
+  background: var(--gradient-blue);
+}
+
+.stat-card--teal {
+  background: var(--gradient-teal);
+}
+
+.stat-card__content {
+  flex: 1;
+}
+
+.stat-card__label {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.stat-card__value {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.stat-card__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 16px;
+}
+
+/* Biểu đồ container */
+.chart-container {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.chart-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark-navy);
+  margin-bottom: 20px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .admin-main {
+    margin-left: 0;
+    padding: 16px;
+  }
+
+  .stat-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .dashboard-title {
+    font-size: 22px;
+  }
+
+  .stat-card__value {
+    font-size: 20px;
+  }
+
+  .chart-container {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-main {
+    padding: 12px;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .stat-card__icon {
+    width: 44px;
+    height: 44px;
+  }
+}

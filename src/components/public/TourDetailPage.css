@@ -1,0 +1,475 @@
+/* ============================================
+   TourDetailPage - Trang chi tiết tour
+   ============================================ */
+.tour-detail-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+/* --- Breadcrumb --- */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 0;
+  font-size: var(--font-sm);
+}
+
+.breadcrumb-link {
+  color: var(--primary-blue);
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.breadcrumb-link:hover {
+  opacity: 0.8;
+}
+
+.breadcrumb-sep {
+  color: var(--dark-gray);
+  font-size: 14px;
+}
+
+.breadcrumb-current {
+  color: var(--dark-gray);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 400px;
+}
+
+/* --- Nội dung chính: 2 cột --- */
+.tour-detail-content {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+/* --- Gallery ảnh --- */
+.tour-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gallery-main {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  aspect-ratio: 4 / 3;
+}
+
+.gallery-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-thumbs {
+  display: flex;
+  gap: 10px;
+}
+
+.gallery-thumb {
+  flex: 1;
+  max-width: 120px;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: border-color 0.2s, opacity 0.2s;
+  padding: 0;
+  background: none;
+}
+
+.gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-thumb:hover {
+  opacity: 0.85;
+}
+
+.gallery-thumb.active {
+  border-color: var(--primary-blue);
+}
+
+/* --- Panel thông tin tour bên phải --- */
+.tour-info-panel {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-md);
+  height: fit-content;
+  position: sticky;
+  top: 80px;
+}
+
+.tour-detail-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--dark-navy);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+/* Giá */
+.tour-price-box {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.tour-price-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--red);
+}
+
+.tour-price-unit {
+  font-size: 0.95rem;
+  color: var(--dark-gray);
+  margin-left: 4px;
+}
+
+/* Thông tin meta */
+.tour-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.tour-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.tour-meta-icon {
+  color: var(--primary-blue);
+  min-width: 18px;
+}
+
+.tour-meta-label {
+  color: var(--dark-gray);
+  font-weight: 600;
+}
+
+.tour-meta-value {
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+/* Chọn ngày khởi hành */
+.tour-dates {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.info-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--dark-navy);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-label-icon {
+  color: var(--primary-blue);
+}
+
+.date-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.date-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-gray);
+  background: var(--white);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.date-btn:hover {
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
+.date-btn.active {
+  background: var(--primary-blue);
+  color: var(--white);
+  border-color: var(--primary-blue);
+}
+
+/* Chọn số người */
+.tour-people {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.people-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.people-row + .people-row {
+  border-top: 1px solid #f0f0f0;
+}
+
+.people-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.people-type {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.people-note {
+  font-size: 0.8rem;
+  color: var(--dark-gray);
+}
+
+.people-counter {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.counter-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border-gray);
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.counter-btn:hover:not(:disabled) {
+  background: var(--primary-blue);
+  color: var(--white);
+  border-color: var(--primary-blue);
+}
+
+.counter-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.counter-value {
+  min-width: 24px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dark-navy);
+}
+
+/* Tổng cộng */
+.tour-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 14px 0;
+}
+
+.total-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dark-navy);
+}
+
+.total-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--red);
+}
+
+/* Nút đặt tour */
+.booking-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary-blue);
+  color: var(--white);
+  font-size: 1.05rem;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+}
+
+.booking-btn:hover {
+  background: #1976D2;
+  transform: translateY(-1px);
+}
+
+.booking-btn:active {
+  transform: translateY(0);
+}
+
+/* --- Tour not found --- */
+.tour-not-found {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.tour-not-found h2 {
+  font-size: 1.5rem;
+  color: var(--dark-navy);
+  margin-bottom: 16px;
+}
+
+.tour-not-found a {
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+/* --- Mô tả tour --- */
+.tour-description-section {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  margin-bottom: 40px;
+  box-shadow: var(--shadow-sm);
+}
+
+.tour-desc-heading {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--dark-navy);
+  margin-bottom: 16px;
+  position: relative;
+  padding-bottom: 12px;
+}
+
+.tour-desc-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: var(--primary-blue);
+  border-radius: 2px;
+}
+
+.tour-desc-text {
+  font-size: 0.95rem;
+  color: var(--dark-gray);
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+.tour-highlights {
+  margin-top: 20px;
+}
+
+.highlights-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark-navy);
+  margin-bottom: 14px;
+}
+
+.highlights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.highlight-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+}
+
+.highlight-icon {
+  color: var(--green);
+  min-width: 18px;
+  font-size: 16px;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+  .tour-detail-content {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .tour-info-panel {
+    position: static;
+  }
+
+  .tour-detail-title {
+    font-size: 1.2rem;
+  }
+
+  .tour-price-value {
+    font-size: 1.35rem;
+  }
+
+  .gallery-thumbs {
+    gap: 6px;
+  }
+
+  .gallery-thumb {
+    max-width: 80px;
+  }
+
+  .breadcrumb-current {
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tour-info-panel {
+    padding: 20px;
+  }
+
+  .tour-description-section {
+    padding: 20px;
+  }
+
+  .date-buttons {
+    flex-direction: column;
+  }
+
+  .date-btn {
+    width: 100%;
+    text-align: center;
+  }
+}

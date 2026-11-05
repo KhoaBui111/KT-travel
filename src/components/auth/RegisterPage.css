@@ -1,0 +1,253 @@
+/* ============================================
+   REGISTER PAGE CSS
+   ============================================ */
+
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 520px;
+  background-color: #e8e8e8;
+  border-radius: 20px;
+  padding: 36px 36px;
+}
+
+/* === Title === */
+.register-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.register-subtitle {
+  font-size: 14px;
+  color: #777;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* === Form === */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Form group - tái sử dụng class từ login */
+.register-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.register-form .form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.register-form .required {
+  color: var(--red);
+  margin-left: 2px;
+}
+
+.register-form .form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.register-form .form-input:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+.register-form .form-input::placeholder {
+  color: #bbb;
+}
+
+/* Password wrapper */
+.register-form .input-password-wrapper {
+  position: relative;
+}
+
+.register-form .input-password-wrapper .form-input {
+  padding-right: 44px;
+}
+
+.register-form .password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+
+.register-form .password-toggle:hover {
+  color: #666;
+}
+
+/* === 2 cột Mật khẩu + Xác nhận === */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* === Checkbox điều khoản === */
+.terms-group {
+  margin-top: 4px;
+}
+
+.terms-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.terms-checkbox {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--primary-blue);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.terms-text {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.terms-link {
+  color: var(--primary-blue);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.terms-link:hover {
+  text-decoration: underline;
+}
+
+/* === Button đăng ký === */
+.register-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--primary-blue);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  margin-top: 4px;
+}
+
+.register-btn:hover {
+  background-color: #1976D2;
+}
+
+.register-btn:active {
+  transform: scale(0.98);
+}
+
+/* === Login link === */
+.register-login-text {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin-top: 16px;
+}
+
+.login-link {
+  color: #E65100;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
+
+/* === Divider === */
+.register-divider {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+  gap: 12px;
+}
+
+.register-divider::before,
+.register-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: #ccc;
+}
+
+.register-divider span {
+  font-size: 13px;
+  color: #999;
+  white-space: nowrap;
+}
+
+/* === Google Button === */
+.register-page .google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.register-page .google-btn:hover {
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* === Responsive === */
+@media (max-width: 480px) {
+  .register-card {
+    padding: 24px 20px;
+    border-radius: 16px;
+  }
+
+  .register-title {
+    font-size: 24px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
