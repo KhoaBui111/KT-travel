@@ -1,0 +1,16 @@
+# Môi trường ảo
+venv/
+
+# File biên dịch tạm của Python
+__pycache__/
+*.pyc
+
+# Bí mật và dữ liệu cục bộ
+.env
+db.sqlite3
+
+# File tĩnh gom ở môi trường thật (chặng 4)
+staticfiles/
+
+# Cấu hình riêng của trình soạn thảo
+.vscode/

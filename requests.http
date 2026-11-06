@@ -1,0 +1,53 @@
+@baseUrl = http://127.0.0.1:8000/api
+
+### 1. Thêm tour (CREATE)
+POST {{baseUrl}}/tours/
+Content-Type: application/json
+
+{
+  "name": "Đà Lạt – Thác Dambri – Samten Hills",
+  "price": 3990000,
+  "duration": "4 ngày 3 đêm",
+  "departure": "TP. Hồ Chí Minh"
+}
+
+### 2. Thêm tour thứ hai
+POST {{baseUrl}}/tours/
+Content-Type: application/json
+
+{
+  "name": "Phú Quốc – Hòn Thơm",
+  "price": 5490000,
+  "duration": "4 ngày 3 đêm",
+  "departure": "Hà Nội"
+}
+
+### 3. Xem danh sách (READ – tất cả)
+GET {{baseUrl}}/tours/
+
+### 4. Xem 1 tour (READ – 1 bản ghi) – đổi số 1 thành id có thật
+GET {{baseUrl}}/tours/1/
+
+### 5. Sửa giá (UPDATE – một phần)
+PATCH {{baseUrl}}/tours/1/
+Content-Type: application/json
+
+{
+  "price": 3590000
+}
+
+### 6. Xoá tour (DELETE)
+DELETE {{baseUrl}}/tours/2/
+
+### 7. Thử dữ liệu SAI: giá quá thấp + thiếu tên -> mong đợi 400
+POST {{baseUrl}}/tours/
+Content-Type: application/json
+
+{
+  "price": 5000,
+  "duration": "1 ngày",
+  "departure": "Huế"
+}
+
+### 8. Thử xem tour KHÔNG tồn tại -> mong đợi 404
+GET {{baseUrl}}/tours/999/
