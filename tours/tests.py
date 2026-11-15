@@ -47,3 +47,13 @@ class TourAPITest(APITestCase):
         res = self.client.delete(f"{self.url}{self.tour.id}/")
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Tour.objects.filter(id=self.tour.id).exists())
+
+    def test_cors_cho_phep_frontend_vercel(self):
+        res = self.client.get(self.url, HTTP_ORIGIN="https://kt-travel.vercel.app")
+        self.assertEqual(
+            res.headers["Access-Control-Allow-Origin"], "https://kt-travel.vercel.app"
+        )
+
+    def test_cors_chan_trang_la(self):
+        res = self.client.get(self.url, HTTP_ORIGIN="https://trang-la.example.com")
+        self.assertNotIn("Access-Control-Allow-Origin", res.headers)

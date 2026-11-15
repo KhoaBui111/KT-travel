@@ -39,3 +39,29 @@ jobs:
 
       - name: Chạy test
         run: python manage.py test
+
+  deploy:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+
+    env:
+      API_URL: https://kt-travel-api.onrender.com/api/tours/
+
+    steps:
+      - name: Ra lệnh cho Render deploy
+        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" > /dev/null
+
+      - name: Chờ Render deploy xong và kiểm tra API
+        run: |
+          sleep 60
+          for i in $(seq 1 18); do
+            if curl -fsS "$API_URL" > /dev/null; then
+              echo "API hoạt động ✅"
+              exit 0
+            fi
+            echo "Lần $i: API chưa sẵn sàng, chờ 20 giây..."
+            sleep 20
+          done
+          echo "API không phản hồi sau khoảng 7 phút ❌"
+          exit 1
