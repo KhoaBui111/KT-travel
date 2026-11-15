@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../common/Sidebar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FiUpload } from 'react-icons/fi';
-import { tours } from '../../data/mockData';
+import { getTour, createTour, updateTour, errorMessages } from '../../services/tourService';
 import './AddTourPage.css';
 
 /**
@@ -22,33 +22,26 @@ const AddTourPage = ({ isEdit = false }) => {
     date: '',
     duration: '',
     transport: '',
+    departure: '',
     price: ''
   });
+  const [errors, setErrors] = useState([]);       // lỗi trả về từ API
+  const [saving, setSaving] = useState(false);
 
-  // Load dữ liệu tour nếu ở chế độ Edit
+  // Load dữ liệu tour từ API nếu ở chế độ Edit
   useEffect(() => {
     if (id) {
-      const tour = tours.find(t => t.id === parseInt(id));
-      if (tour) {
-        // Chuyển đổi ngày từ DD/MM/YYYY sang YYYY-MM-DD cho input date
-        let formattedDate = '';
-        if (tour.dates && tour.dates.length > 0) {
-          const parts = tour.dates[0].split('/');
-          if (parts.length === 3) {
-            formattedDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-          }
-        }
-
-        setFormData({
-          name: tour.name || '',
-          description: tour.description || '',
-          images: [],
-          date: formattedDate,
-          duration: tour.duration || '',
-          transport: tour.airline || '',
-          price: tour.price ? String(tour.price) : ''
-        });
-      }
+      getTour(id)
+        .then((tour) => {
+          setFormData((prev) => ({
+            ...prev,
+            name: tour.name || '',
+            duration: tour.duration || '',
+            departure: tour.departure || '',
+            price: tour.price ? String(tour.price) : ''
+          }));
+        })
+        .catch((err) => setErrors(errorMessages(err)));
     }
   }, [id]);
 
@@ -75,12 +68,31 @@ const AddTourPage = ({ isEdit = false }) => {
     e.preventDefault();
   };
 
-  // Xử lý submit form
-  const handleSubmit = (e) => {
+  // Xử lý submit form: gửi 4 trường mà Backend MVP đang lưu
+  // (mô tả, hình, ngày, phương tiện chưa có trong Backend nên chưa gửi)
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(isEditMode ? 'Update tour data:' : 'Create tour data:', formData);
-    alert(isEditMode ? 'Cập nhật tour thành công!' : 'Thêm tour thành công!');
-    navigate('/admin/tours');
+    const payload = {
+      name: formData.name,
+      price: Number(formData.price),
+      duration: formData.duration,
+      departure: formData.departure
+    };
+    setSaving(true);
+    setErrors([]);
+    try {
+      if (isEditMode) {
+        await updateTour(id, payload);
+      } else {
+        await createTour(payload);
+      }
+      alert(isEditMode ? 'Cập nhật tour thành công!' : 'Thêm tour thành công!');
+      navigate('/admin/tours');
+    } catch (err) {
+      setErrors(errorMessages(err)); // ví dụ: price: Giá tour tối thiểu là 100.000 Đ.
+    } finally {
+      setSaving(false);
+    }
   };
 
   // Xử lý hủy
@@ -93,6 +105,12 @@ const AddTourPage = ({ isEdit = false }) => {
       <Sidebar />
       <main className="admin-main">
         <h1 className="page-title">{isEditMode ? 'Chỉnh sửa tour du lịch' : 'Thêm tour du lịch'}</h1>
+
+        {errors.length > 0 && (
+          <div style={{ color: 'red', marginBottom: 16 }}>
+            {errors.map((msg) => <p key={msg}>⚠️ {msg}</p>)}
+          </div>
+        )}
 
         <form className="add-tour-form" onSubmit={handleSubmit}>
           {/* Tên tour */}
@@ -190,6 +208,21 @@ const AddTourPage = ({ isEdit = false }) => {
               </select>
             </div>
             <div className="form-group">
+              <label className="form-label">Nơi khởi hành</label>
+              <input
+                type="text"
+                name="departure"
+                value={formData.departure}
+                onChange={handleChange}
+                placeholder="VD: TP. Hồ Chí Minh"
+                className="form-input"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
               <label className="form-label">Giá</label>
               <input
                 type="number"
@@ -207,8 +240,8 @@ const AddTourPage = ({ isEdit = false }) => {
             <button type="button" className="btn-cancel" onClick={handleCancel}>
               Hủy
             </button>
-            <button type="submit" className="btn-confirm">
-              {isEditMode ? 'Cập nhật' : 'Xác nhận'}
+            <button type="submit" className="btn-confirm" disabled={saving}>
+              {saving ? 'Đang lưu...' : isEditMode ? 'Cập nhật' : 'Xác nhận'}
             </button>
           </div>
         </form>

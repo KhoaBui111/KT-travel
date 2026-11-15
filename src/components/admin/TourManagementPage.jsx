@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../common/Sidebar';
-import { tours, formatCurrency } from '../../data/mockData';
+import { formatCurrency } from '../../data/mockData';
+import { getTours, deleteTour, errorMessages } from '../../services/tourService';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiSearch, FiEdit, FiEye, FiPlus } from 'react-icons/fi';
+import { FiSearch, FiEdit, FiEye, FiPlus, FiTrash2 } from 'react-icons/fi';
 import './TourManagementPage.css';
 
 /**
@@ -13,11 +14,34 @@ const TourManagementPage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRegion, setFilterRegion] = useState('all');
+  const [tours, setTours] = useState([]);       // dữ liệu lấy từ API
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Lấy danh sách tour từ Backend khi mở trang
+  useEffect(() => {
+    getTours()
+      .then(setTours)
+      .catch((err) => setError(errorMessages(err).join(' ')))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // Xoá tour: hỏi xác nhận → gọi API → bỏ tour khỏi danh sách đang hiển thị
+  const handleDelete = async (tour) => {
+    if (!window.confirm(`Xoá tour "${tour.name}"?`)) return;
+    try {
+      await deleteTour(tour.id);
+      setTours((prev) => prev.filter((t) => t.id !== tour.id));
+    } catch (err) {
+      alert(errorMessages(err).join('\n'));
+    }
+  };
 
   // Lọc tours theo tìm kiếm và vùng miền
+  // (Backend MVP chưa có trường region: tour không có region vẫn hiện ở mọi bộ lọc)
   const filteredTours = tours.filter(tour => {
     const matchSearch = tour.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchFilter = filterRegion === 'all' || tour.region === filterRegion;
+    const matchFilter = filterRegion === 'all' || !tour.region || tour.region === filterRegion;
     return matchSearch && matchFilter;
   });
 
@@ -54,6 +78,9 @@ const TourManagementPage = () => {
           </Link>
         </div>
 
+        {loading && <p>Đang tải dữ liệu... (lần đầu có thể mất khoảng 50 giây vì máy chủ đang khởi động)</p>}
+        {error && <p style={{ color: 'red' }}>Lỗi: {error}</p>}
+
         {/* Bảng danh sách tour */}
         <div className="tour-table-wrapper">
           <table className="tour-table">
@@ -63,7 +90,7 @@ const TourManagementPage = () => {
                 <th>Tên tour</th>
                 <th>Giá</th>
                 <th>Thời lượng</th>
-                <th>Số lượng</th>
+                <th>Khởi hành</th>
                 <th>Thao tác</th>
               </tr>
             </thead>
@@ -72,7 +99,7 @@ const TourManagementPage = () => {
                 <tr key={tour.id}>
                   <td>
                     <img
-                      src={tour.image}
+                      src={tour.image || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=400&fit=crop'}
                       alt={tour.name}
                       className="tour-thumbnail"
                     />
@@ -80,7 +107,7 @@ const TourManagementPage = () => {
                   <td className="tour-name-cell">{tour.name}</td>
                   <td>{formatCurrency(tour.price)}</td>
                   <td>{tour.duration}</td>
-                  <td>{tour.currentBookings}/{tour.maxPeople}</td>
+                  <td>{tour.departure}</td>
                   <td className="tour-actions-cell">
                     <button
                       className="btn-edit"
@@ -93,6 +120,14 @@ const TourManagementPage = () => {
                       <FiEye size={14} />
                       Chi tiết
                     </Link>
+                    <button
+                      className="btn-edit"
+                      style={{ background: '#dc3545' }}
+                      onClick={() => handleDelete(tour)}
+                    >
+                      <FiTrash2 size={14} />
+                      Xoá
+                    </button>
                   </td>
                 </tr>
               ))}
