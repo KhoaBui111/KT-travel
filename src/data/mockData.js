@@ -20,7 +20,8 @@ export const tours = [
     gallery: [
       'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&h=600&fit=crop',
       'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1527259222730-2a71e03bd5fd?w=800&h=600&fit=crop',
+      '/assets/images/tours/lucerne-kapellbrucke.jpg',
+      '/assets/images/tours/neuschwanstein.jpg',
       'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=800&h=600&fit=crop',
     ],
     dates: ['31/10/2024', '11/11/2024', '21/11/2024'],
@@ -49,7 +50,9 @@ export const tours = [
     image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&h=400&fit=crop',
     gallery: [
       'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&h=600&fit=crop',
+      '/assets/images/tours/berlin-brandenburg-gate.jpg',
+      '/assets/images/tours/amsterdam-canal.jpg',
+      '/assets/images/tours/brussels-grand-place.jpg',
     ],
     dates: ['31/10/2024', '11/11/2024', '21/11/2024'],
     description: 'Hành trình khám phá Tây Âu với các thành phố nổi tiếng Paris, Berlin, Amsterdam, Brussels.',
@@ -76,6 +79,8 @@ export const tours = [
     image: 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=600&h=400&fit=crop',
     gallery: [
       'https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=800&h=600&fit=crop',
+      '/assets/images/tours/granada-alhambra.jpg',
+      '/assets/images/tours/lisbon-belem-tower.jpg',
     ],
     dates: ['05/11/2024', '15/11/2024'],
     description: 'Khám phá bán đảo Iberia với những kiến trúc độc đáo và ẩm thực tuyệt vời.',
@@ -99,9 +104,11 @@ export const tours = [
     country: 'Việt Nam',
     region: 'domestic',
     area: 'Miền Trung',
-    image: 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=600&h=400&fit=crop',
+    image: '/assets/images/tours/sam-son-beach.jpg',
     gallery: [
-      'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop',
+      '/assets/images/tours/sam-son-beach.jpg',
+      '/assets/images/destinations/thanh-hoa-thanh-nha-ho.jpg',
+      '/assets/images/tours/thanh-nha-ho-cong-nam.jpg',
     ],
     dates: ['20/10/2024', '01/11/2024', '15/11/2024'],
     description: 'Khám phá vẻ đẹp thiên nhiên và văn hóa Thanh Hóa với bãi biển Sầm Sơn nổi tiếng.',
@@ -125,9 +132,11 @@ export const tours = [
     country: 'Thụy Sĩ',
     region: 'international',
     continent: 'Châu Âu',
-    image: 'https://images.unsplash.com/photo-1527259222730-2a71e03bd5fd?w=600&h=400&fit=crop',
+    image: '/assets/images/tours/jungfraujoch.jpg',
     gallery: [
-      'https://images.unsplash.com/photo-1527259222730-2a71e03bd5fd?w=800&h=600&fit=crop',
+      '/assets/images/tours/jungfraujoch.jpg',
+      '/assets/images/tours/colosseum-rome.jpg',
+      '/assets/images/tours/vatican-st-peter-square.jpg',
     ],
     dates: ['10/11/2024', '25/11/2024'],
     description: 'Hành trình lãng mạn qua Thụy Sĩ và Ý với núi Alps hùng vĩ và thành Rome cổ kính.',
@@ -154,6 +163,8 @@ export const tours = [
     image: 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=600&h=400&fit=crop',
     gallery: [
       'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&h=600&fit=crop',
+      '/assets/images/tours/hoi-an-ancient-town.jpg',
+      '/assets/images/tours/hoi-an-old-house.jpg',
     ],
     dates: ['25/10/2024', '08/11/2024', '22/11/2024'],
     description: 'Khám phá miền Trung Việt Nam với bãi biển Mỹ Khê, phố cổ Hội An và Bà Nà Hills.',
@@ -322,10 +333,10 @@ export const dashboardStats = {
 
 // Destinations cho trang chủ
 export const destinations = [
-  { id: 1, name: 'Từ Cẩm Thành', image: 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=300&h=200&fit=crop' },
+  { id: 1, name: 'Từ Cẩm Thành', image: '/assets/images/destinations/tu-cam-thanh.jpg' },
   { id: 2, name: 'Núi Phú Sĩ', image: 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=300&h=200&fit=crop' },
-  { id: 3, name: 'Bình Nhưỡng', image: 'https://images.unsplash.com/photo-1548115184-bc6544d06a58?w=300&h=200&fit=crop' },
-  { id: 4, name: 'Thanh Hóa', image: 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=300&h=200&fit=crop' }
+  { id: 3, name: 'Bình Nhưỡng', image: '/assets/images/destinations/binh-nhuong.jpg' },
+  { id: 4, name: 'Thanh Hóa', image: '/assets/images/destinations/thanh-hoa-thanh-nha-ho.jpg' }
 ];
 
 // Format tiền VND
