@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+
+    env:
+      DJANGO_SECRET_KEY: ci-test-key-khong-dung-that
+      DJANGO_DEBUG: "False"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,testserver
+
+    steps:
+      - name: Lấy code về
+        uses: actions/checkout@v4
+
+      - name: Cài Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+          cache: pip
+
+      - name: Cài thư viện
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install ruff
+
+      - name: Kiểm tra code bằng Ruff
+        run: ruff check .
+
+      - name: Kiểm tra migration chưa tạo
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Chạy test
+        run: python manage.py test
