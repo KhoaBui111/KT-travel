@@ -1,10 +1,33 @@
 # 🧳 KT Travel API
 
 Backend (máy chủ) cho website đặt tour du lịch **KT Travel**, xây dựng bằng **Python + Django REST Framework**.
-Đây là phiên bản **MVP** (Minimum Viable Product, sản phẩm tối thiểu chạy được): CRUD cho bảng `tours`.
+Đây là phiên bản **MVP** (Minimum Viable Product, sản phẩm tối thiểu chạy được): CRUD cho bảng `tours`, đã **deploy lên Render** với **CI/CD tự động** bằng GitHub Actions.
 
-> 🔗 Frontend (React): [KhoaBui111/KT-travel](https://github.com/KhoaBui111/KT-travel)
+> 🌐 **API đang chạy:** <https://kt-travel-api.onrender.com/api/tours/>
+> 🔗 Frontend (React): [KhoaBui111/KT-travel](https://github.com/KhoaBui111/KT-travel) · <https://kt-travel.vercel.app>
 > 📚 Đồ án môn **Phân tích thiết kế hệ thống thông tin** và **Thực tập chuyên ngành**
+
+---
+
+## ⚡ Dành cho Frontend: dùng API ngay, không cần cài gì
+
+| | Giá trị |
+|---|---|
+| **Base URL (host)** | `https://kt-travel-api.onrender.com/api` |
+| Base URL (khi chạy backend ở máy) | `http://127.0.0.1:8000/api` |
+| Các địa chỉ FE **được phép gọi** (CORS) | `http://localhost:3000`, `https://kt-travel.vercel.app` |
+
+1. Trong repo React, tạo file `.env` (hoặc khai báo biến môi trường trên Vercel):
+   ```env
+   REACT_APP_API_URL=https://kt-travel-api.onrender.com/api
+   ```
+2. Gọi API như ví dụ ở mục [Gọi API từ React](#gọi-api-từ-react-ví-dụ).
+3. Xem danh sách endpoint và cấu trúc dữ liệu ở mục [Tài liệu API](#-tài-liệu-api).
+4. Muốn thử tay: mở <https://kt-travel-api.onrender.com/api/tours/> trên trình duyệt, kéo xuống cuối trang có form để thêm tour.
+
+> ⏳ Host dùng gói **Free**: sau 15 phút không ai gọi, server "ngủ", lần gọi đầu tiên mất khoảng **50 giây**. Trước khi demo, mở link API trước 1–2 phút.
+> ⚠️ FE chạy ở **cổng khác 3000** hoặc **tên miền khác** sẽ bị trình duyệt chặn (lỗi `blocked by CORS policy`). Báo backend để thêm địa chỉ vào `CORS_ALLOWED_ORIGINS`.
+> ⚠️ API **chưa có đăng nhập**: ai có link cũng thêm, sửa, xoá được. Đừng chia sẻ link công khai; dữ liệu trên host là **dùng chung** cả nhóm.
 
 ---
 
@@ -29,9 +52,15 @@ Backend (máy chủ) cho website đặt tour du lịch **KT Travel**, xây dựn
 | Ngôn ngữ | Python | 3.11+ |
 | Framework | Django (bản hỗ trợ dài hạn – LTS) | 5.2 |
 | API | Django REST Framework | 3.18 |
-| Cơ sở dữ liệu | SQLite (môi trường phát triển) | có sẵn trong Python |
+| Cơ sở dữ liệu | SQLite (ở máy) · **PostgreSQL** (trên host) | – |
+| Kết nối CSDL | dj-database-url + psycopg 3 (đọc `DATABASE_URL`) | 3.1 / 3.3 |
+| Máy chủ ứng dụng | gunicorn (thay `runserver` trên host) | 27 |
+| File tĩnh | WhiteNoise | 6.12 |
+| CORS | django-cors-headers | 4.9 |
 | Quản lý cấu hình | python-dotenv (đọc file `.env`) | – |
-| Frontend | React 18 (repo riêng) | – |
+| Host | Render (Web Service + PostgreSQL, gói Free, Singapore) | – |
+| CI/CD | GitHub Actions + Ruff (kiểm tra code) | – |
+| Frontend | React 18 (repo riêng, deploy trên Vercel) | – |
 
 ---
 
@@ -39,7 +68,8 @@ Backend (máy chủ) cho website đặt tour du lịch **KT Travel**, xây dựn
 
 ```
  [React – Frontend]  ──HTTP / JSON──►  [Django REST API – repo này]  ──ORM──►  [CSDL: bảng tours]
-   localhost:3000                         localhost:8000/api/
+   localhost:3000                         localhost:8000/api/                         SQLite
+   kt-travel.vercel.app                   kt-travel-api.onrender.com/api/             PostgreSQL (Render)
 ```
 
 Luồng xử lý một request bên trong Django:
@@ -71,11 +101,16 @@ kt-travel-api/
 │   ├── serializers.py      # TourSerializer
 │   ├── views.py            # TourViewSet
 │   ├── admin.py            # Cấu hình trang quản trị
+│   ├── tests.py            # 7 test tự động (CRUD + CORS)
 │   └── migrations/         # Lịch sử thay đổi cấu trúc CSDL
+├── .github/workflows/
+│   └── ci.yml              # CI/CD: test → tự deploy lên Render
 ├── manage.py               # Công cụ dòng lệnh của Django
 ├── requirements.txt        # Danh sách thư viện
 ├── requests.http           # Request mẫu để thử API
 ├── .env.example            # Mẫu biến môi trường
+├── .python-version         # Phiên bản Python (3.11) cho CI và Render
+├── ruff.toml               # Cấu hình công cụ kiểm tra code
 └── README.md
 ```
 
@@ -154,12 +189,16 @@ Khai báo trong file `.env` (file này **không** đưa lên GitHub, xem `.gitig
 | `DJANGO_SECRET_KEY` | ✅ | *(chuỗi ngẫu nhiên)* | Khoá bí mật của Django. **Mỗi máy, mỗi môi trường một khoá riêng** |
 | `DJANGO_DEBUG` | | `True` | `True` khi phát triển; **`False`** khi chạy thật |
 | `DJANGO_ALLOWED_HOSTS` | | `127.0.0.1,localhost` | Các tên miền được phép truy cập, cách nhau bằng dấu phẩy |
+| `CORS_ALLOWED_ORIGINS` | | `http://localhost:3000,https://kt-travel.vercel.app` | Các địa chỉ Frontend được gọi API từ trình duyệt |
+| `DATABASE_URL` | chỉ trên host | *(Render cấp)* | Có biến này → dùng PostgreSQL; không có → dùng SQLite. **Không** đặt ở máy |
+
+> Trên Render, các biến được đặt trong mục **Environment** của service; `RENDER_EXTERNAL_HOSTNAME` do Render tự cấp và được tự thêm vào `ALLOWED_HOSTS`.
 
 ---
 
 ## 📖 Tài liệu API
 
-**Đường dẫn gốc:** `http://127.0.0.1:8000/api`
+**Đường dẫn gốc:** `https://kt-travel-api.onrender.com/api` (host) · `http://127.0.0.1:8000/api` (máy)
 **Định dạng dữ liệu:** JSON
 
 ### Danh sách endpoint
@@ -243,12 +282,27 @@ Content-Type: application/json
 
 ### Gọi API từ React (ví dụ)
 ```js
-const API_URL = process.env.REACT_APP_API_URL; // http://localhost:8000/api
+// src/services/tourService.js
+const API_URL = process.env.REACT_APP_API_URL; // https://kt-travel-api.onrender.com/api
 
-const res = await fetch(`${API_URL}/tours/`);
-const tours = await res.json();
+async function request(path, options = {}) {
+  const res = await fetch(`${API_URL}${path}`, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
+  if (res.status === 204) return null;          // DELETE thành công, không có nội dung
+  const data = await res.json();
+  if (!res.ok) throw data;                       // 400/404: data chứa lỗi từng trường
+  return data;
+}
+
+export const getTours   = ()         => request("/tours/");
+export const getTour    = (id)       => request(`/tours/${id}/`);
+export const createTour = (tour)     => request("/tours/", { method: "POST", body: JSON.stringify(tour) });
+export const updateTour = (id, part) => request(`/tours/${id}/`, { method: "PATCH", body: JSON.stringify(part) });
+export const deleteTour = (id)       => request(`/tours/${id}/`, { method: "DELETE" });
 ```
-> ⚠️ Phần nối với Frontend (CORS) sẽ được cấu hình ở giai đoạn tiếp theo. Hiện API mới gọi được từ trình duyệt, REST Client hoặc Postman.
+> 💡 Nhớ thêm dấu `/` ở cuối đường dẫn (`/tours/`, `/tours/1/`): Django bắt buộc có dấu này.
 
 ---
 
@@ -262,13 +316,25 @@ File [`requests.http`](requests.http) có sẵn **8 request mẫu** (thêm, xem,
 
 Kết quả kiểm thử ngày 06/11/2026: **11/11 trường hợp đúng mã trạng thái mong đợi.**
 
+**Test tự động** (CI cũng chạy đúng lệnh này):
+```powershell
+python manage.py test
+```
+✅ `Ran 7 tests ... OK`: danh sách, thêm, chặn giá thấp, sửa giá, xoá, CORS cho phép Vercel, CORS chặn trang lạ.
+
 ---
 
 ## 🌿 Quy trình làm việc nhóm với Git
 
 - **`main`**: nhánh ổn định, **không code trực tiếp** trên nhánh này.
 - Mỗi chức năng một nhánh: `feature/<tên-chức-năng>`, ví dụ `feature/api-bookings`.
-- Xong chức năng → mở **Pull Request** vào `main` → thành viên còn lại review → gộp.
+- Xong chức năng → mở **Pull Request** vào `main` → **CI tự chạy test** → thành viên còn lại review → gộp.
+- Gộp vào `main` → GitHub Actions **tự deploy lên Render** (khoảng 2 phút). **Không** bấm deploy tay trên Render.
+
+```
+push nhánh feature → Pull Request → CI: test ✅ (deploy: Skipped)
+                                       → Merge vào main → CI: test ✅ → deploy ✅ → Render live
+```
 
 ```powershell
 git checkout main
@@ -300,10 +366,11 @@ git push -u origin feature/ten-chuc-nang
 - [x] CRUD bảng `tours` (Django REST Framework)
 - [x] Trang quản trị Django Admin
 - [x] Tách bí mật ra file `.env`, đưa code lên GitHub
-- [ ] Nối API với Frontend React (CORS)
-- [ ] Deploy lên host
-- [ ] CI: GitHub Actions tự kiểm tra code và chạy test
-- [ ] CD: tự động deploy khi push lên `main`
+- [x] Deploy lên host (Render + PostgreSQL)
+- [x] CI: GitHub Actions tự kiểm tra code và chạy test
+- [x] CD: tự động deploy khi gộp vào `main`
+- [x] Cho phép Frontend gọi API (CORS)
+- [ ] Frontend React chuyển từ dữ liệu mẫu sang gọi API thật
 - [ ] Mở rộng: lịch khởi hành và số chỗ, đơn đặt tour, tài khoản và đăng nhập (JWT), thanh toán PayPal sandbox
 
 ---
