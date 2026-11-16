@@ -1,0 +1,124 @@
+/* ============================================
+   STEPPER CSS - 4 bước booking
+   ============================================ */
+
+.stepper {
+  padding: 24px 20px;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.stepper-track {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/* === Step === */
+.stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.stepper-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 3px solid #ddd;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.stepper-number {
+  font-size: 16px;
+  font-weight: 700;
+  color: #bbb;
+}
+
+.stepper-check {
+  width: 20px;
+  height: 20px;
+  color: #fff;
+}
+
+.stepper-label {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #999;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* === Active Step === */
+.stepper-step.active .stepper-circle {
+  border-color: var(--primary-blue);
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.15);
+}
+
+.stepper-step.active .stepper-number {
+  color: var(--primary-blue);
+}
+
+.stepper-step.active .stepper-label {
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+
+/* === Completed Step === */
+.stepper-step.completed .stepper-circle {
+  border-color: var(--green);
+  background-color: var(--green);
+}
+
+.stepper-step.completed .stepper-label {
+  color: var(--green);
+  font-weight: 600;
+}
+
+/* === Line giữa các steps === */
+.stepper-line {
+  flex: 1;
+  height: 3px;
+  background-color: #ddd;
+  margin-top: 22px;
+  min-width: 60px;
+  transition: background-color 0.3s ease;
+}
+
+.stepper-line.completed {
+  background-color: var(--green);
+}
+
+/* === Responsive === */
+@media (max-width: 480px) {
+  .stepper {
+    padding: 16px 10px;
+  }
+
+  .stepper-circle {
+    width: 36px;
+    height: 36px;
+  }
+
+  .stepper-number {
+    font-size: 14px;
+  }
+
+  .stepper-label {
+    font-size: 11px;
+  }
+
+  .stepper-line {
+    min-width: 30px;
+    margin-top: 18px;
+  }
+}

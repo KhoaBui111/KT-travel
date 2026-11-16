@@ -1,0 +1,328 @@
+/* ============================================
+   NOTIFICATION DROPDOWN CSS - KT Travel
+   ============================================ */
+
+.notification-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: -10px;
+  width: 380px;
+  background: #ffffff;
+  border-radius: var(--radius-lg, 14px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  z-index: 1002;
+  overflow: hidden;
+  animation: notifSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes notifSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* === Header Panel === */
+.notif-dropdown-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+}
+
+.notif-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark-navy, #1a2332);
+}
+
+.notif-unread-count-pill {
+  font-size: 11px;
+  font-weight: 700;
+  background: #e6f4ff;
+  color: var(--primary-blue, #2196f3);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.notif-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notif-action-btn {
+  background: none;
+  border: none;
+  color: var(--primary-blue, #2196f3);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.notif-action-btn:hover {
+  background: #f0f7ff;
+}
+
+.notif-clear-btn {
+  color: #999;
+  padding: 4px 6px;
+}
+
+.notif-clear-btn:hover {
+  color: var(--red, #e53935);
+  background: #fff1f0;
+}
+
+/* === Body / List Container === */
+.notif-list-container {
+  max-height: 380px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.notif-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* === Notification Item === */
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #f5f5f5;
+  cursor: pointer;
+  transition: background-color 0.18s ease, transform 0.1s ease;
+  position: relative;
+}
+
+.notif-item:last-child {
+  border-bottom: none;
+}
+
+.notif-item-unread {
+  background-color: #f2f7ff;
+}
+
+.notif-item-unread:hover {
+  background-color: #e5efff;
+}
+
+.notif-item-read {
+  background-color: #ffffff;
+}
+
+.notif-item-read:hover {
+  background-color: #fafafa;
+}
+
+/* === Left Icon === */
+.notif-item-left {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.notif-icon-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.notif-item:hover .notif-icon-badge {
+  transform: scale(1.06);
+}
+
+.notif-icon-booking {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.notif-icon-promo {
+  background: #fff4e5;
+  color: #f57c00;
+}
+
+.notif-icon-tour {
+  background: #e3f2fd;
+  color: #0288d1;
+}
+
+.notif-icon-default {
+  background: #f5f5f5;
+  color: #616161;
+}
+
+/* === Center Text === */
+.notif-item-center {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-item-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3px;
+}
+
+.notif-item-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--dark-navy, #1a2332);
+  line-height: 1.35;
+}
+
+.notif-item-desc {
+  font-size: 12.5px;
+  color: #555555;
+  line-height: 1.45;
+  margin: 0 0 6px 0;
+  word-break: break-word;
+}
+
+.notif-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #999999;
+}
+
+.notif-time-icon {
+  font-size: 11px;
+}
+
+.notif-item-time {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* === Right Dot === */
+.notif-item-right {
+  flex-shrink: 0;
+  padding-top: 6px;
+}
+
+.notif-unread-dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--primary-blue, #2196f3);
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+/* === Empty State === */
+.notif-empty-state {
+  padding: 40px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.notif-empty-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #f7f9fc;
+  color: #b0bec5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.notif-empty-text {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--dark-navy, #1a2332);
+  margin-bottom: 4px;
+}
+
+.notif-empty-sub {
+  font-size: 12px;
+  color: #888888;
+  max-width: 240px;
+  line-height: 1.4;
+}
+
+/* === Footer Panel === */
+.notif-dropdown-footer {
+  padding: 11px 16px;
+  background: #f9fbfd;
+  border-top: 1px solid #f0f0f0;
+  text-align: center;
+}
+
+.notif-footer-link {
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-blue, #2196f3);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  display: inline-block;
+  width: 100%;
+}
+
+.notif-footer-link:hover {
+  text-decoration: underline;
+  color: #1976d2;
+}
+
+/* === Responsive (Mobile & Tablet) === */
+@media (max-width: 768px) {
+  .notification-dropdown {
+    width: 330px;
+    right: -50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .notification-dropdown {
+    width: 92vw;
+    right: -70px;
+    max-width: 360px;
+  }
+
+  .notif-item {
+    padding: 12px 14px;
+  }
+
+  .notif-item-title {
+    font-size: 13px;
+  }
+
+  .notif-item-desc {
+    font-size: 12px;
+  }
+}

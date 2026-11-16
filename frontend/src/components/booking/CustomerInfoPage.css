@@ -1,0 +1,230 @@
+/* ============================================
+   CustomerInfoPage - Form thông tin khách hàng
+   Bước 2 trong quy trình đặt tour
+   ============================================ */
+
+.customer-info-page {
+  min-height: 100vh;
+  background-color: var(--white, #FFFFFF);
+  font-family: 'Nunito', sans-serif;
+}
+
+/* Container chính */
+.customer-info-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+/* Heading với background xanh */
+.customer-info-heading {
+  background-color: var(--primary-blue, #2196F3);
+  padding: 16px 24px;
+  border-radius: 12px 12px 0 0;
+}
+
+.customer-info-heading h2 {
+  color: var(--white, #FFFFFF);
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Form */
+.customer-info-form {
+  background-color: var(--form-bg, #e8e8e8);
+  padding: 30px 32px;
+  border-radius: 0 0 12px 12px;
+}
+
+/* Form group */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 700;
+  color: var(--dark-navy, #1a2332);
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+/* Input & Select */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--white, #FFFFFF);
+  color: var(--dark-navy, #1a2332);
+  outline: none;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--primary-blue, #2196F3);
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.15);
+}
+
+.form-group select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 18px;
+  padding-right: 40px;
+}
+
+/* Radio group - Giới tính */
+.radio-group {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.radio-label {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500 !important;
+  font-size: 15px;
+  color: var(--dark-navy, #1a2332);
+}
+
+.radio-label input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #999;
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.3s ease;
+}
+
+.radio-label input[type="radio"]:checked {
+  border-color: var(--primary-blue, #2196F3);
+}
+
+.radio-label input[type="radio"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--primary-blue, #2196F3);
+}
+
+.radio-custom {
+  display: none;
+}
+
+/* Buttons row */
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 30px;
+  padding-top: 20px;
+}
+
+.btn-cancel,
+.btn-confirm {
+  padding: 12px 32px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.2s ease;
+}
+
+.btn-cancel {
+  background-color: var(--red, #E53935);
+  color: var(--white, #FFFFFF);
+}
+
+.btn-confirm {
+  background-color: var(--accent-gold, #F5A623);
+  color: var(--white, #FFFFFF);
+}
+
+.btn-cancel:hover,
+.btn-confirm:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-cancel:active,
+.btn-confirm:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .customer-info-container {
+    margin: 20px auto;
+    padding: 0 16px;
+  }
+
+  .customer-info-form {
+    padding: 24px 20px;
+  }
+
+  .form-buttons {
+    flex-direction: column-reverse;
+  }
+
+  .btn-cancel,
+  .btn-confirm {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .customer-info-heading {
+    padding: 14px 18px;
+  }
+
+  .customer-info-heading h2 {
+    font-size: 17px;
+  }
+
+  .customer-info-form {
+    padding: 20px 16px;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group select {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .radio-group {
+    gap: 20px;
+  }
+}
