@@ -7,8 +7,13 @@ on:
     branches: [main]
 
 jobs:
+  # ===== Backend (thư mục backend/) =====
   test:
     runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        working-directory: backend
 
     env:
       DJANGO_SECRET_KEY: ci-test-key-khong-dung-that
@@ -22,8 +27,9 @@ jobs:
       - name: Cài Python
         uses: actions/setup-python@v5
         with:
-          python-version-file: ".python-version"
+          python-version-file: "backend/.python-version"
           cache: pip
+          cache-dependency-path: backend/requirements.txt
 
       - name: Cài thư viện
         run: |
@@ -40,8 +46,36 @@ jobs:
       - name: Chạy test
         run: python manage.py test
 
+  # ===== Frontend (thư mục frontend/): kiểm tra build được =====
+  build-frontend:
+    runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Lấy code về
+        uses: actions/checkout@v4
+
+      - name: Cài Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Cài thư viện
+        run: npm ci
+
+      - name: Build React
+        run: npm run build
+        env:
+          CI: true
+
+  # ===== Deploy Backend lên Render (Frontend do Vercel tự deploy) =====
   deploy:
-    needs: test
+    needs: [test, build-frontend]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
 

@@ -14,3 +14,8 @@ staticfiles/
 
 # Cấu hình riêng của trình soạn thảo
 .vscode/
+
+# Frontend (React)
+node_modules/
+frontend/build/
+.ruff_cache/

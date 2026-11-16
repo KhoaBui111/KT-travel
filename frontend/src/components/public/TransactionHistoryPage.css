@@ -1,0 +1,155 @@
+/* ============================================
+   TransactionHistoryPage - Lịch sử giao dịch
+   ============================================ */
+.transaction-history-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.history-heading {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--dark-navy);
+  padding: 30px 0 24px;
+}
+
+/* --- Bảng giao dịch --- */
+.history-table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 40px;
+  background: var(--white);
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.history-table thead {
+  background: var(--dark-navy);
+}
+
+.history-table thead th {
+  color: var(--white);
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 14px 16px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.history-table tbody td {
+  padding: 14px 16px;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  vertical-align: middle;
+}
+
+/* Hàng xen kẽ màu */
+.row-even {
+  background: var(--white);
+}
+
+.row-odd {
+  background: #f7f8fa;
+}
+
+.history-table tbody tr:hover {
+  background: #eef4ff;
+}
+
+/* Cột Mã vé */
+.td-ticket {
+  font-weight: 700;
+  color: var(--primary-blue);
+}
+
+/* Cột Tên tour: flag + name */
+.td-tour {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tour-flag {
+  font-size: 1.2rem;
+}
+
+.tour-name-text {
+  font-weight: 600;
+  color: var(--dark-navy);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+/* Cột Giá */
+.td-price {
+  font-weight: 700;
+  color: var(--red);
+  white-space: nowrap;
+}
+
+/* Cột Số lượng */
+.td-quantity {
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Nút chi tiết */
+.detail-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--primary-blue);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.detail-btn:hover {
+  background: #1976D2;
+  transform: scale(1.05);
+}
+
+/* Trống */
+.history-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--dark-gray);
+  font-size: 1rem;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+  .history-heading {
+    font-size: 1.4rem;
+    padding: 20px 0 16px;
+  }
+
+  .history-table-wrapper {
+    border-radius: var(--radius-md);
+  }
+
+  .history-table thead th,
+  .history-table tbody td {
+    padding: 12px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .history-heading {
+    font-size: 1.2rem;
+  }
+}

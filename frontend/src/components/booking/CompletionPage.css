@@ -1,0 +1,176 @@
+/* ============================================
+   CompletionPage - Thanh toán thành công
+   Bước 4 (hoàn tất) trong quy trình đặt tour
+   ============================================ */
+
+.completion-page {
+  min-height: 100vh;
+  background-color: var(--white, #FFFFFF);
+  font-family: 'Nunito', sans-serif;
+}
+
+/* Container chính */
+.completion-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+/* Icon check xanh lớn */
+.completion-icon {
+  margin-bottom: 20px;
+}
+
+.completion-icon svg {
+  width: 80px;
+  height: 80px;
+  color: var(--green, #4CAF50);
+  stroke-width: 1.5;
+}
+
+/* Heading thành công */
+.completion-title {
+  color: var(--green, #4CAF50);
+  font-size: 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0 32px 0;
+  letter-spacing: 1px;
+}
+
+/* Box thông tin giao dịch */
+.completion-info-box {
+  background-color: var(--white, #FFFFFF);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 8px 0;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+/* Mỗi dòng thông tin */
+.completion-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.completion-info-row:last-child {
+  border-bottom: none;
+}
+
+.completion-info-label {
+  font-weight: 700;
+  color: var(--dark-navy, #1a2332);
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.completion-info-value {
+  color: var(--dark-gray, #555);
+  font-size: 15px;
+  text-align: right;
+}
+
+/* Tổng thanh toán nổi bật */
+.completion-info-value.total-amount {
+  font-weight: 700;
+  color: var(--red, #E53935);
+  font-size: 17px;
+}
+
+/* Button về trang chủ */
+.btn-go-home {
+  display: inline-block;
+  background-color: var(--dark-navy, #1a2332);
+  color: var(--white, #FFFFFF);
+  padding: 14px 48px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.2s ease;
+}
+
+.btn-go-home:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.btn-go-home:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .completion-container {
+    margin: 30px auto;
+    padding: 0 16px;
+  }
+
+  .completion-icon svg {
+    width: 70px;
+    height: 70px;
+  }
+
+  .completion-title {
+    font-size: 21px;
+    margin-bottom: 24px;
+  }
+
+  .completion-info-row {
+    padding: 12px 20px;
+  }
+
+  .completion-info-label {
+    font-size: 14px;
+  }
+
+  .completion-info-value {
+    font-size: 14px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .completion-container {
+    margin: 24px auto;
+  }
+
+  .completion-icon svg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .completion-title {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  .completion-info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 10px 16px;
+  }
+
+  .completion-info-value {
+    text-align: left;
+    font-weight: 600;
+    color: var(--dark-navy, #1a2332);
+  }
+
+  .btn-go-home {
+    width: 100%;
+    padding: 14px 24px;
+  }
+}
