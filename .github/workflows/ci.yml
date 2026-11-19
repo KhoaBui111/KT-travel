@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     env:
-      API_URL: https://kt-travel-api.onrender.com/api/tours/
+      API_URL: https://kt-travel.onrender.com/api/tours/
 
     steps:
       - name: Ra lệnh cho Render deploy
