@@ -4,7 +4,7 @@
    ============================================ */
 
 const API_URL =
-  process.env.REACT_APP_API_URL || 'https://kt-travel-api.onrender.com/api';
+  process.env.REACT_APP_API_URL || 'https://kt-travel.onrender.com/api';
 
 // Hàm chung: gửi request, đổi kết quả sang JSON, ném lỗi nếu mã 4xx/5xx
 async function request(path, options = {}) {
