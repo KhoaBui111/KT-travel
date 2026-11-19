@@ -14,7 +14,7 @@ import {
 import { MdFlight } from 'react-icons/md';
 import Header from '../common/Header';
 import TourCard from '../common/TourCard';
-import { tours } from '../../data/mockData';
+import { getPublicTours } from '../../services/tourService';
 import './SearchPage.css';
 
 /**
@@ -49,6 +49,17 @@ const SearchPage = () => {
   const [selectedAirline, setSelectedAirline] = useState('all');
   const [selectedDuration, setSelectedDuration] = useState('all');
   const [sortBy, setSortBy] = useState('default');
+
+  // Danh sách tour lấy từ API
+  const [tours, setTours] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getPublicTours()
+      .then(setTours)
+      .catch(() => setTours([]))
+      .finally(() => setLoading(false));
+  }, []);
 
   // Trạng thái mở bộ lọc trên mobile/tablet
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -181,7 +192,7 @@ const SearchPage = () => {
     }
 
     return result;
-  }, [keyword, selectedPrice, selectedAirline, selectedDuration, sortBy]);
+  }, [tours, keyword, selectedPrice, selectedAirline, selectedDuration, sortBy]);
 
   // Cấu hình danh sách options bộ lọc giá
   const priceOptions = [
@@ -481,7 +492,9 @@ const SearchPage = () => {
             )}
 
             {/* DANH SÁCH TOUR HOẶC EMPTY STATE */}
-            {filteredTours.length > 0 ? (
+            {loading ? (
+              <p>Đang tải tour... (lần đầu có thể mất khoảng 50 giây)</p>
+            ) : filteredTours.length > 0 ? (
               <div className="search-tours-grid">
                 {filteredTours.map((tour) => (
                   <TourCard key={tour.id} tour={tour} />

@@ -36,3 +36,37 @@ export const errorMessages = (err) => {
     `${field}: ${Array.isArray(msgs) ? msgs.join(', ') : msgs}`
   );
 };
+
+/* ============================================
+   DÀNH CHO TRANG KHÁCH (Trang chủ, Tìm kiếm, Chi tiết)
+   API có: id, name, price, duration, departure, airline, description,
+   highlights, dates (YYYY-MM-DD), gallery, image (ảnh đầu tiên).
+   toPublicTour() bù các trường còn trống và đổi ngày sang dd/mm/yyyy.
+   ============================================ */
+export const DEFAULT_IMAGE =
+  'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=400&fit=crop';
+
+// "2026-12-20" -> "20/12/2026" (giữ nguyên nếu không đúng định dạng ISO)
+export const formatDate = (iso) => {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : iso;
+};
+
+export const toPublicTour = (t) => {
+  const image = t.image || DEFAULT_IMAGE;
+  return {
+    ...t,
+    image,
+    gallery: t.gallery?.length ? t.gallery : [image],
+    airline: t.airline || 'Đang cập nhật',
+    country: t.country || 'Việt Nam',
+    durationDays: t.durationDays ?? (parseInt(t.duration, 10) || 0), // "5 ngày 4 đêm" -> 5
+    dates: t.dates?.length ? t.dates.map(formatDate) : [],
+    description: t.description || 'Lịch trình chi tiết đang được cập nhật.',
+    highlights: t.highlights || [],
+  };
+};
+
+export const getPublicTours = () =>
+  getTours().then((list) => list.map(toPublicTour));
+export const getPublicTour = (id) => getTour(id).then(toPublicTour);

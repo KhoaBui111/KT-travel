@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ===== Backend (thư mục backend/) =====
+  test:
+    runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      DJANGO_SECRET_KEY: ci-test-key-khong-dung-that
+      DJANGO_DEBUG: "False"
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,testserver
+
+    steps:
+      - name: Lấy code về
+        uses: actions/checkout@v4
+
+      - name: Cài Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "backend/.python-version"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Cài thư viện
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install ruff
+
+      - name: Kiểm tra code bằng Ruff
+        run: ruff check .
+
+      - name: Kiểm tra migration chưa tạo
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Chạy test
+        run: python manage.py test
+
+  # ===== Frontend (thư mục frontend/): kiểm tra build được =====
+  build-frontend:
+    runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Lấy code về
+        uses: actions/checkout@v4
+
+      - name: Cài Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Cài thư viện
+        run: npm ci
+
+      - name: Build React
+        run: npm run build
+        env:
+          CI: true
+
+  # ===== Deploy Backend lên Render (Frontend do Vercel tự deploy) =====
+  deploy:
+    needs: [test, build-frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+
+    env:
+      API_URL: https://kt-travel-api.onrender.com/api/tours/
+
+    steps:
+      - name: Ra lệnh cho Render deploy
+        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" > /dev/null
+
+      - name: Chờ Render deploy xong và kiểm tra API
+        run: |
+          sleep 60
+          for i in $(seq 1 18); do
+            if curl -fsS "$API_URL" > /dev/null; then
+              echo "API hoạt động ✅"
+              exit 0
+            fi
+            echo "Lần $i: API chưa sẵn sàng, chờ 20 giây..."
+            sleep 20
+          done
+          echo "API không phản hồi sau khoảng 7 phút ❌"
+          exit 1

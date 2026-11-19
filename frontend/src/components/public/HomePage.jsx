@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiSearch } from 'react-icons/fi';
 import Header from '../common/Header';
 import TourCard from '../common/TourCard';
-import { tours, destinations } from '../../data/mockData';
+import { destinations } from '../../data/mockData';
+import { getPublicTours } from '../../services/tourService';
 import './HomePage.css';
 
 /**
@@ -13,6 +14,16 @@ import './HomePage.css';
 const HomePage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [tours, setTours] = useState([]);       // tour lấy từ API
+  const [loading, setLoading] = useState(true);
+
+  // Mở trang chủ -> gọi API lấy danh sách tour
+  useEffect(() => {
+    getPublicTours()
+      .then(setTours)
+      .catch(() => setTours([]))
+      .finally(() => setLoading(false));
+  }, []);
 
   // Xử lý tìm kiếm từ Hero Banner
   const handleSearch = (e) => {
@@ -79,6 +90,8 @@ const HomePage = () => {
       <section className="featured-section">
         <div className="container">
           <h2 className="section-title">Sản phẩm nổi bật</h2>
+          {loading && <p>Đang tải tour... (lần đầu có thể mất khoảng 50 giây)</p>}
+          {!loading && tours.length === 0 && <p>Chưa có tour nào.</p>}
           <div className="tours-grid">
             {tours.map((tour) => (
               <TourCard key={tour.id} tour={tour} />
