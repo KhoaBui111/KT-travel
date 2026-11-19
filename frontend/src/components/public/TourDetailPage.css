@@ -388,6 +388,7 @@
   color: var(--dark-gray);
   line-height: 1.8;
   margin-bottom: 24px;
+  white-space: pre-line; /* giữ xuống dòng của lịch trình nhập từ admin */
 }
 
 .tour-highlights {

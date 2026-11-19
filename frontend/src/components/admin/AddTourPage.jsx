@@ -1,45 +1,82 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../common/Sidebar';
 import { useNavigate, useParams } from 'react-router-dom';
-import { FiUpload } from 'react-icons/fi';
-import { getTour, createTour, updateTour, errorMessages } from '../../services/tourService';
+import { FiUpload, FiX, FiPlus } from 'react-icons/fi';
+import { getTour, createTour, updateTour, errorMessages, formatDate } from '../../services/tourService';
 import './AddTourPage.css';
+
+const AIRLINE_OPTIONS = ['VietJet', 'Vietnam Airlines', 'Bamboo Airways', 'Xe khách'];
+const MAX_IMAGES = 10;
+
+/**
+ * Đọc file ảnh, thu nhỏ (tối đa 1280px) và nén JPEG -> data URL (base64)
+ * để gửi kèm JSON lên Backend, tránh ảnh gốc quá nặng.
+ */
+const compressImage = (file, maxSize = 1280, quality = 0.8) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
 
 /**
  * AddTourPage - Trang thêm / chỉnh sửa tour du lịch
- * Form nhập thông tin tour: tên, mô tả, hình ảnh, ngày, thời lượng, phương tiện, giá
+ * Form nhập thông tin tour: tên, lịch trình, điểm nổi bật, hình ảnh,
+ * ngày khởi hành, thời lượng, hãng/phương tiện, nơi khởi hành, giá
  * Hỗ trợ cả 2 chế độ: Tạo mới và Chỉnh sửa (isEdit / có param id)
  */
 const AddTourPage = ({ isEdit = false }) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = isEdit || Boolean(id);
+  const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    images: [],
-    date: '',
+    highlights: '',   // mỗi dòng 1 điểm nổi bật
+    gallery: [],      // URL hoặc data URL
+    dates: [],        // 'YYYY-MM-DD'
     duration: '',
-    transport: '',
+    airline: '',
     departure: '',
     price: ''
   });
+  const [newDate, setNewDate] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [errors, setErrors] = useState([]);       // lỗi trả về từ API
   const [saving, setSaving] = useState(false);
+  const [processingImages, setProcessingImages] = useState(false);
 
   // Load dữ liệu tour từ API nếu ở chế độ Edit
   useEffect(() => {
     if (id) {
       getTour(id)
         .then((tour) => {
-          setFormData((prev) => ({
-            ...prev,
+          setFormData({
             name: tour.name || '',
+            description: tour.description || '',
+            highlights: (tour.highlights || []).join('\n'),
+            gallery: tour.gallery || [],
+            dates: tour.dates || [],
             duration: tour.duration || '',
+            airline: tour.airline || '',
             departure: tour.departure || '',
             price: tour.price ? String(tour.price) : ''
-          }));
+          });
         })
         .catch((err) => setErrors(errorMessages(err)));
     }
@@ -51,32 +88,97 @@ const AddTourPage = ({ isEdit = false }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Xử lý upload file
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setFormData(prev => ({ ...prev, images: files }));
+  /* ---------- Ngày khởi hành ---------- */
+  const handleAddDate = () => {
+    if (!newDate) return;
+    setFormData(prev => (
+      prev.dates.includes(newDate)
+        ? prev
+        : { ...prev, dates: [...prev.dates, newDate].sort() }
+    ));
+    setNewDate('');
   };
 
-  // Xử lý kéo thả file
+  const handleRemoveDate = (date) => {
+    setFormData(prev => ({ ...prev, dates: prev.dates.filter(d => d !== date) }));
+  };
+
+  /* ---------- Hình ảnh ---------- */
+  const addImageFiles = async (fileList) => {
+    const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+    if (files.length === 0) return;
+    const room = MAX_IMAGES - formData.gallery.length;
+    if (room <= 0) {
+      alert(`Tối đa ${MAX_IMAGES} ảnh.`);
+      return;
+    }
+    setProcessingImages(true);
+    try {
+      const images = await Promise.all(files.slice(0, room).map(f => compressImage(f)));
+      setFormData(prev => ({ ...prev, gallery: [...prev.gallery, ...images].slice(0, MAX_IMAGES) }));
+      if (files.length > room) alert(`Chỉ thêm được ${room} ảnh (tối đa ${MAX_IMAGES} ảnh).`);
+    } catch {
+      alert('Không đọc được file ảnh.');
+    } finally {
+      setProcessingImages(false);
+    }
+  };
+
+  const handleFileChange = (e) => {
+    addImageFiles(e.target.files);
+    e.target.value = ''; // cho phép chọn lại cùng file
+  };
+
   const handleDrop = (e) => {
     e.preventDefault();
-    const files = Array.from(e.dataTransfer.files);
-    setFormData(prev => ({ ...prev, images: files }));
+    addImageFiles(e.dataTransfer.files);
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
   };
 
-  // Xử lý submit form: gửi 4 trường mà Backend MVP đang lưu
-  // (mô tả, hình, ngày, phương tiện chưa có trong Backend nên chưa gửi)
+  const handleAddImageUrl = () => {
+    const url = imageUrl.trim();
+    if (!url) return;
+    if (!/^https?:\/\//i.test(url)) {
+      alert('Link ảnh phải bắt đầu bằng http:// hoặc https://');
+      return;
+    }
+    if (formData.gallery.length >= MAX_IMAGES) {
+      alert(`Tối đa ${MAX_IMAGES} ảnh.`);
+      return;
+    }
+    setFormData(prev => ({ ...prev, gallery: [...prev.gallery, url] }));
+    setImageUrl('');
+  };
+
+  const handleRemoveImage = (index) => {
+    setFormData(prev => ({ ...prev, gallery: prev.gallery.filter((_, i) => i !== index) }));
+  };
+
+  // Đặt ảnh làm ảnh đại diện (đưa lên đầu danh sách)
+  const handleMakeCover = (index) => {
+    setFormData(prev => {
+      const gallery = [...prev.gallery];
+      const [img] = gallery.splice(index, 1);
+      return { ...prev, gallery: [img, ...gallery] };
+    });
+  };
+
+  // Xử lý submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
       name: formData.name,
       price: Number(formData.price),
       duration: formData.duration,
-      departure: formData.departure
+      departure: formData.departure,
+      airline: formData.airline,
+      description: formData.description,
+      highlights: formData.highlights.split('\n').map(s => s.trim()).filter(Boolean),
+      dates: formData.dates,
+      gallery: formData.gallery
     };
     setSaving(true);
     setErrors([]);
@@ -99,6 +201,11 @@ const AddTourPage = ({ isEdit = false }) => {
   const handleCancel = () => {
     navigate('/admin/tours');
   };
+
+  // Giữ được giá trị hãng cũ nếu không nằm trong danh sách có sẵn
+  const airlineOptions = formData.airline && !AIRLINE_OPTIONS.includes(formData.airline)
+    ? [formData.airline, ...AIRLINE_OPTIONS]
+    : AIRLINE_OPTIONS;
 
   return (
     <div className="admin-layout">
@@ -127,56 +234,135 @@ const AddTourPage = ({ isEdit = false }) => {
             />
           </div>
 
-          {/* Mô tả tour */}
+          {/* Lịch trình / mô tả tour */}
           <div className="form-group">
-            <label className="form-label">Mô tả tour</label>
+            <label className="form-label">Lịch trình / Mô tả tour</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Nhập mô tả chi tiết về tour"
+              placeholder={'VD:\nNgày 1: Đón khách tại sân bay, nhận phòng khách sạn...\nNgày 2: Tham quan...'}
               className="form-textarea"
-              rows={5}
+              rows={8}
             />
           </div>
 
-          {/* Upload hình ảnh */}
+          {/* Điểm nổi bật */}
           <div className="form-group">
-            <label className="form-label">Thêm hình</label>
+            <label className="form-label">Điểm nổi bật (mỗi dòng một ý)</label>
+            <textarea
+              name="highlights"
+              value={formData.highlights}
+              onChange={handleChange}
+              placeholder={'Tham quan tháp Eiffel\nDu thuyền trên sông Seine'}
+              className="form-textarea"
+              rows={4}
+            />
+          </div>
+
+          {/* Hình ảnh */}
+          <div className="form-group">
+            <label className="form-label">
+              Hình ảnh ({formData.gallery.length}/{MAX_IMAGES}) — ảnh đầu tiên là ảnh đại diện
+            </label>
+
+            {formData.gallery.length > 0 && (
+              <div className="image-preview-grid">
+                {formData.gallery.map((src, index) => (
+                  <div key={index} className={`image-preview ${index === 0 ? 'is-cover' : ''}`}>
+                    <img src={src} alt={`Ảnh ${index + 1}`} />
+                    {index === 0 ? (
+                      <span className="image-cover-badge">Ảnh đại diện</span>
+                    ) : (
+                      <button
+                        type="button"
+                        className="image-cover-btn"
+                        onClick={() => handleMakeCover(index)}
+                      >
+                        Đặt làm đại diện
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      className="image-remove-btn"
+                      onClick={() => handleRemoveImage(index)}
+                      title="Xoá ảnh"
+                    >
+                      <FiX size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div
               className="upload-area"
               onDrop={handleDrop}
               onDragOver={handleDragOver}
-              onClick={() => document.getElementById('file-upload').click()}
+              onClick={() => fileInputRef.current?.click()}
             >
               <FiUpload size={32} className="upload-icon" />
-              <p className="upload-text">Kéo thả hoặc click để chọn ảnh</p>
-              {formData.images.length > 0 && (
-                <p className="upload-count">{formData.images.length} ảnh đã chọn</p>
-              )}
+              <p className="upload-text">
+                {processingImages ? 'Đang xử lý ảnh...' : 'Kéo thả hoặc click để thêm ảnh'}
+              </p>
               <input
                 type="file"
-                id="file-upload"
+                ref={fileInputRef}
                 multiple
                 accept="image/*"
                 onChange={handleFileChange}
                 style={{ display: 'none' }}
               />
             </div>
-          </div>
 
-          {/* Row 2 cột: Ngày + Thời lượng */}
-          <div className="form-row">
-            <div className="form-group">
-              <label className="form-label">Ngày</label>
+            <div className="inline-add">
               <input
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
+                type="url"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddImageUrl(); } }}
+                placeholder="Hoặc dán link ảnh (https://...)"
                 className="form-input"
               />
+              <button type="button" className="btn-inline-add" onClick={handleAddImageUrl}>
+                <FiPlus size={16} /> Thêm link
+              </button>
             </div>
+          </div>
+
+          {/* Ngày khởi hành */}
+          <div className="form-group">
+            <label className="form-label">Ngày khởi hành</label>
+            <div className="inline-add">
+              <input
+                type="date"
+                value={newDate}
+                onChange={(e) => setNewDate(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddDate(); } }}
+                className="form-input"
+              />
+              <button type="button" className="btn-inline-add" onClick={handleAddDate} disabled={!newDate}>
+                <FiPlus size={16} /> Thêm ngày
+              </button>
+            </div>
+            {formData.dates.length > 0 ? (
+              <div className="date-chips">
+                {formData.dates.map((date) => (
+                  <span key={date} className="date-chip">
+                    {formatDate(date)}
+                    <button type="button" onClick={() => handleRemoveDate(date)} title="Xoá ngày">
+                      <FiX size={12} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="field-hint">Chưa có ngày khởi hành nào.</p>
+            )}
+          </div>
+
+          {/* Row 2 cột: Thời lượng + Hãng */}
+          <div className="form-row">
             <div className="form-group">
               <label className="form-label">Thời lượng</label>
               <input
@@ -186,27 +372,27 @@ const AddTourPage = ({ isEdit = false }) => {
                 onChange={handleChange}
                 placeholder="VD: 5 ngày 4 đêm"
                 className="form-input"
+                required
               />
             </div>
-          </div>
-
-          {/* Row 2 cột: Phương tiện + Giá */}
-          <div className="form-row">
             <div className="form-group">
-              <label className="form-label">Phương tiện</label>
+              <label className="form-label">Hãng / Phương tiện</label>
               <select
-                name="transport"
-                value={formData.transport}
+                name="airline"
+                value={formData.airline}
                 onChange={handleChange}
                 className="form-select"
               >
-                <option value="">Chọn phương tiện</option>
-                <option value="VietJet">VietJet</option>
-                <option value="Vietnam Airlines">Vietnam Airlines</option>
-                <option value="Bamboo Airways">Bamboo Airways</option>
-                <option value="Xe khách">Xe khách</option>
+                <option value="">Chọn hãng / phương tiện</option>
+                {airlineOptions.map((opt) => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
               </select>
             </div>
+          </div>
+
+          {/* Row 2 cột: Nơi khởi hành + Giá */}
+          <div className="form-row">
             <div className="form-group">
               <label className="form-label">Nơi khởi hành</label>
               <input
@@ -219,9 +405,6 @@ const AddTourPage = ({ isEdit = false }) => {
                 required
               />
             </div>
-          </div>
-
-          <div className="form-row">
             <div className="form-group">
               <label className="form-label">Giá</label>
               <input
@@ -231,6 +414,7 @@ const AddTourPage = ({ isEdit = false }) => {
                 onChange={handleChange}
                 placeholder="Nhập giá tour (VND)"
                 className="form-input"
+                required
               />
             </div>
           </div>
@@ -240,7 +424,7 @@ const AddTourPage = ({ isEdit = false }) => {
             <button type="button" className="btn-cancel" onClick={handleCancel}>
               Hủy
             </button>
-            <button type="submit" className="btn-confirm" disabled={saving}>
+            <button type="submit" className="btn-confirm" disabled={saving || processingImages}>
               {saving ? 'Đang lưu...' : isEditMode ? 'Cập nhật' : 'Xác nhận'}
             </button>
           </div>

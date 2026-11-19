@@ -161,6 +161,9 @@ STORAGES = {
     },
 }
 
+# Cho phép body JSON lớn hơn (ảnh tour gửi dạng base64, tối đa 10 ảnh)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 25 * 1024 * 1024  # 25 MB
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

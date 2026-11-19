@@ -10,6 +10,9 @@ import './TourCard.css';
  * Thiết kế: Ảnh + badge thời gian, country tag, tên tour, 
  * khởi hành, hãng bay, giá, nút chi tiết
  */
+const DEFAULT_IMAGE =
+  'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=400&fit=crop';
+
 const TourCard = ({ tour }) => {
   const {
     id,
@@ -17,11 +20,10 @@ const TourCard = ({ tour }) => {
     duration,
     price,
     departure,
-    airline,
-    country,
-    image
+    airline = 'Đang cập nhật',
+    country = 'Việt Nam',
   } = tour;
-
+  const image = tour.image || DEFAULT_IMAGE;
   return (
     <div className="tour-card">
       {/* Ảnh tour + badge */}

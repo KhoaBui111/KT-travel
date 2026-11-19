@@ -48,6 +48,43 @@ class TourAPITest(APITestCase):
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Tour.objects.filter(id=self.tour.id).exists())
 
+    def test_sua_ngay_lich_trinh_anh_hang(self):
+        data = {
+            "airline": "VietJet",
+            "description": "Ngày 1: Đón khách. Ngày 2: Tham quan.",
+            "highlights": ["Hồ Xuân Hương", " ", "Chợ đêm"],
+            "dates": ["2026-12-20", "2026-12-01"],
+            "gallery": ["https://example.com/a.jpg", "data:image/jpeg;base64,AAAA"],
+        }
+        res = self.client.patch(f"{self.url}{self.tour.id}/", data, format="json")
+        self.assertEqual(res.status_code, status.HTTP_200_OK, res.data)
+        self.tour.refresh_from_db()
+        self.assertEqual(self.tour.airline, "VietJet")
+        self.assertEqual(self.tour.highlights, ["Hồ Xuân Hương", "Chợ đêm"])
+        self.assertEqual(self.tour.dates, ["2026-12-01", "2026-12-20"])
+        self.assertEqual(len(self.tour.gallery), 2)
+        self.assertEqual(res.data["image"], "https://example.com/a.jpg")
+
+    def test_tu_choi_ngay_sai_dinh_dang(self):
+        res = self.client.patch(
+            f"{self.url}{self.tour.id}/", {"dates": ["20/12/2026"]}, format="json"
+        )
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("dates", res.data)
+
+    def test_tu_choi_anh_khong_hop_le(self):
+        res = self.client.patch(
+            f"{self.url}{self.tour.id}/", {"gallery": ["javascript:alert(1)"]}, format="json"
+        )
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_danh_sach_khong_tra_gallery(self):
+        self.tour.gallery = ["https://example.com/a.jpg"]
+        self.tour.save()
+        res = self.client.get(self.url)
+        self.assertNotIn("gallery", res.data[0])
+        self.assertEqual(res.data[0]["image"], "https://example.com/a.jpg")
+
     def test_cors_cho_phep_frontend_vercel(self):
         res = self.client.get(self.url, HTTP_ORIGIN="https://kt-travel.vercel.app")
         self.assertEqual(

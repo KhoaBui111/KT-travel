@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FiChevronRight, FiMapPin, FiClock, FiCalendar } from 'react-icons/fi';
 import { MdFlight } from 'react-icons/md';
 import { FaPlus, FaMinus, FaCheckCircle } from 'react-icons/fa';
 import Header from '../common/Header';
-import { tours, formatCurrency } from '../../data/mockData';
+import { formatCurrency } from '../../data/mockData';
+import { getPublicTour } from '../../services/tourService';
 import './TourDetailPage.css';
 
 /**
@@ -15,8 +16,17 @@ const TourDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Tìm tour theo ID
-  const tour = tours.find((t) => t.id === parseInt(id));
+  // Lấy tour theo ID từ API
+  const [tour, setTour] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    getPublicTour(id)
+      .then(setTour)
+      .catch(() => setTour(null)) // 404 hoặc lỗi mạng -> coi như không tìm thấy
+      .finally(() => setLoading(false));
+  }, [id]);
 
   // State quản lý ảnh gallery đang chọn
   const [selectedImage, setSelectedImage] = useState(0);
@@ -26,6 +36,18 @@ const TourDetailPage = () => {
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
+
+  // Đang tải
+  if (loading) {
+    return (
+      <div className="tour-detail-page">
+        <Header />
+        <div className="container tour-not-found">
+          <p>Đang tải tour... (lần đầu có thể mất khoảng 50 giây)</p>
+        </div>
+      </div>
+    );
+  }
 
   // Nếu không tìm thấy tour
   if (!tour) {
@@ -40,8 +62,8 @@ const TourDetailPage = () => {
     );
   }
 
-  // Lấy gallery (đảm bảo luôn có ảnh)
-  const gallery = tour.gallery && tour.gallery.length > 0 ? tour.gallery : [tour.image];
+  // Gallery luôn có ít nhất 1 ảnh (toPublicTour đã bù)
+  const gallery = tour.gallery;
 
   // Tính tổng cộng (trẻ em 75%, em bé miễn phí)
   const totalPrice = tour.price * adults + tour.price * 0.75 * children;
@@ -57,7 +79,7 @@ const TourDetailPage = () => {
     navigate('/booking/customer-info', {
       state: {
         tour,
-        selectedDate: tour.dates && tour.dates.length > 0 ? tour.dates[selectedDate] : '31/10/2024',
+        selectedDate: tour.dates.length > 0 ? tour.dates[selectedDate] : 'Liên hệ để chọn ngày',
         adults,
         children,
         infants,
@@ -139,6 +161,9 @@ const TourDetailPage = () => {
                 Ngày khởi hành
               </h3>
               <div className="date-buttons">
+                {tour.dates.length === 0 && (
+                  <span className="people-note">Liên hệ để chọn ngày khởi hành</span>
+                )}
                 {tour.dates.map((date, index) => (
                   <button
                     key={index}
