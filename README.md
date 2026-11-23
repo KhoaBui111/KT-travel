@@ -5,7 +5,7 @@ Repo gộp chung (**monorepo**) gồm 2 phần:
 
 | Thư mục | Nội dung | Công nghệ | Chạy trên |
 |---|---|---|---|
-| [`backend/`](backend/) | API quản lý tour | Python 3.11 · Django 5.2 · Django REST Framework · PostgreSQL (Neon) | Render: <https://kt-travel-api.onrender.com/api/tours/> |
+| [`backend/`](backend/) | API quản lý tour | Python 3.11 · Django 5.2 · Django REST Framework · PostgreSQL (Neon) | Render: <https://kt-travel.onrender.com/api/tours/> |
 | [`frontend/`](frontend/) | Giao diện khách hàng và trang quản trị | React 18 | Vercel |
 
 ```

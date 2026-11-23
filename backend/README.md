@@ -3,7 +3,7 @@
 Backend (máy chủ) cho website đặt tour du lịch **KT Travel**, xây dựng bằng **Python + Django REST Framework**.
 Đây là phiên bản **MVP** (Minimum Viable Product, sản phẩm tối thiểu chạy được): CRUD cho bảng `tours`, đã **deploy lên Render** với **CI/CD tự động** bằng GitHub Actions.
 
-> 🌐 **API đang chạy:** <https://kt-travel-api.onrender.com/api/tours/>
+> 🌐 **API đang chạy:** <https://kt-travel.onrender.com/api/tours/>
 > 🔗 Frontend (React): [KhoaBui111/KT-travel](https://github.com/KhoaBui111/KT-travel) · <https://kt-travel.vercel.app>
 > 📚 Đồ án môn **Phân tích thiết kế hệ thống thông tin** và **Thực tập chuyên ngành**
 
@@ -13,17 +13,17 @@ Backend (máy chủ) cho website đặt tour du lịch **KT Travel**, xây dựn
 
 | | Giá trị |
 |---|---|
-| **Base URL (host)** | `https://kt-travel-api.onrender.com/api` |
+| **Base URL (host)** | `https://kt-travel.onrender.com/api` |
 | Base URL (khi chạy backend ở máy) | `http://127.0.0.1:8000/api` |
 | Các địa chỉ FE **được phép gọi** (CORS) | `http://localhost:3000`, `https://kt-travel.vercel.app` |
 
 1. Trong repo React, tạo file `.env` (hoặc khai báo biến môi trường trên Vercel):
    ```env
-   REACT_APP_API_URL=https://kt-travel-api.onrender.com/api
+   REACT_APP_API_URL=https://kt-travel.onrender.com/api
    ```
 2. Gọi API như ví dụ ở mục [Gọi API từ React](#gọi-api-từ-react-ví-dụ).
 3. Xem danh sách endpoint và cấu trúc dữ liệu ở mục [Tài liệu API](#-tài-liệu-api).
-4. Muốn thử tay: mở <https://kt-travel-api.onrender.com/api/tours/> trên trình duyệt, kéo xuống cuối trang có form để thêm tour.
+4. Muốn thử tay: mở <https://kt-travel.onrender.com/api/tours/> trên trình duyệt, kéo xuống cuối trang có form để thêm tour.
 
 > ⏳ Host dùng gói **Free**: sau 15 phút không ai gọi, server "ngủ", lần gọi đầu tiên mất khoảng **50 giây**. Trước khi demo, mở link API trước 1–2 phút.
 > ⚠️ FE chạy ở **cổng khác 3000** hoặc **tên miền khác** sẽ bị trình duyệt chặn (lỗi `blocked by CORS policy`). Báo backend để thêm địa chỉ vào `CORS_ALLOWED_ORIGINS`.
@@ -69,7 +69,7 @@ Backend (máy chủ) cho website đặt tour du lịch **KT Travel**, xây dựn
 ```
  [React – Frontend]  ──HTTP / JSON──►  [Django REST API – repo này]  ──ORM──►  [CSDL: bảng tours]
    localhost:3000                         localhost:8000/api/                         SQLite
-   kt-travel.vercel.app                   kt-travel-api.onrender.com/api/             PostgreSQL (Render)
+   kt-travel.vercel.app                   kt-travel.onrender.com/api/                 PostgreSQL (Neon)
 ```
 
 Luồng xử lý một request bên trong Django:
@@ -198,7 +198,7 @@ Khai báo trong file `.env` (file này **không** đưa lên GitHub, xem `.gitig
 
 ## 📖 Tài liệu API
 
-**Đường dẫn gốc:** `https://kt-travel-api.onrender.com/api` (host) · `http://127.0.0.1:8000/api` (máy)
+**Đường dẫn gốc:** `https://kt-travel.onrender.com/api` (host) · `http://127.0.0.1:8000/api` (máy)
 **Định dạng dữ liệu:** JSON
 
 ### Danh sách endpoint
@@ -283,7 +283,7 @@ Content-Type: application/json
 ### Gọi API từ React (ví dụ)
 ```js
 // src/services/tourService.js
-const API_URL = process.env.REACT_APP_API_URL; // https://kt-travel-api.onrender.com/api
+const API_URL = process.env.REACT_APP_API_URL; // https://kt-travel.onrender.com/api
 
 async function request(path, options = {}) {
   const res = await fetch(`${API_URL}${path}`, {
