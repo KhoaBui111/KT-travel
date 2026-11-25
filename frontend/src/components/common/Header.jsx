@@ -84,6 +84,7 @@ const Header = ({ isLoggedIn, onLogout }) => {
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userName');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('authToken');
     window.dispatchEvent(new Event('authChange'));
     setLoggedIn(false);
     setUserName('');
