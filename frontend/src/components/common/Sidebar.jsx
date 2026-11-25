@@ -21,6 +21,7 @@ const Sidebar = () => {
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userName');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('authToken');
     window.dispatchEvent(new Event('authChange'));
     alert('Đã đăng xuất thành công khỏi hệ thống Quản trị!');
     navigate('/', { replace: true });

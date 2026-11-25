@@ -3,13 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
 import { users } from '../../data/mockData';
+import { register } from '../../services/authService';
 import './RegisterPage.css';
 
 /**
  * RegisterPage - Trang đăng ký
  * Card tương tự login, nhiều fields hơn
  * Fields: Họ tên, SĐT, Email, Mật khẩu, Xác nhận mật khẩu
- * Lưu thông tin tài khoản mới vào localStorage ('registeredUsers')
+ * Gửi thông tin lên Backend API (/api/auth/register/), lưu vào bảng tai_khoan
  * Chuyển hướng tới /login sau khi đăng ký thành công
  */
 const RegisterPage = () => {
@@ -24,13 +25,14 @@ const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!agreeTerms) {
       alert('Vui lòng đồng ý với Điều khoản sử dụng');
@@ -41,50 +43,22 @@ const RegisterPage = () => {
       return;
     }
 
-    // Đọc danh sách registeredUsers từ localStorage
-    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-
-    // Kiểm tra trùng email đã đăng ký
-    const emailLower = formData.email.trim().toLowerCase();
-    const isExisted = registeredUsers.some(
-      (u) => u.email && u.email.toLowerCase() === emailLower
-    );
-    if (isExisted) {
-      alert('Email này đã được đăng ký! Vui lòng sử dụng email khác hoặc đăng nhập.');
-      return;
-    }
-
-    // Tạo đối tượng người dùng mới với role: 'user', status: 'active'
-    const newUser = {
-      id: Date.now(),
-      name: formData.fullName.trim(),
-      email: emailLower,
-      password: formData.password,
-      phone: formData.phone.trim(),
-      role: 'user',
-      status: 'active',
-      createdAt: new Date().toLocaleDateString('vi-VN')
-    };
-
-    // Lưu vào danh sách registeredUsers
-    const updatedRegisteredUsers = [...registeredUsers, newUser];
-    localStorage.setItem('registeredUsers', JSON.stringify(updatedRegisteredUsers));
-
-    // Đồng thời cập nhật vào managedUsers trong localStorage
-    // để trang Quản lý Tài khoản (PermissionPage) của Admin thấy ngay tài khoản mới vừa đăng ký!
+    // Gửi lên backend: kiểm tra trùng email, độ mạnh mật khẩu, băm mật khẩu, lưu vào CSDL
+    setLoading(true);
     try {
-      const savedManagedUsers = localStorage.getItem('managedUsers');
-      const managedUsers = savedManagedUsers ? JSON.parse(savedManagedUsers) : [...users];
-      if (!managedUsers.some((u) => u.email && u.email.toLowerCase() === emailLower)) {
-        managedUsers.push(newUser);
-        localStorage.setItem('managedUsers', JSON.stringify(managedUsers));
-      }
+      await register({
+        email: formData.email.trim(),
+        matKhau: formData.password,
+        hoTen: formData.fullName.trim(),
+        soDienThoai: formData.phone.trim(),
+      });
+      alert('Đăng ký tài khoản thành công! Vui lòng đăng nhập để tiếp tục.');
+      navigate('/login');
     } catch (err) {
-      console.error('Lỗi khi cập nhật managedUsers:', err);
+      alert(err.message); // vd: "Email này đã được đăng ký."
+    } finally {
+      setLoading(false);
     }
-
-    alert('Đăng ký tài khoản thành công! Vui lòng đăng nhập để tiếp tục.');
-    navigate('/login');
   };
 
   const handleGoogleRegister = () => {
@@ -252,8 +226,8 @@ const RegisterPage = () => {
           </div>
 
           {/* Button đăng ký */}
-          <button type="submit" className="register-btn">
-            Đăng ký
+          <button type="submit" className="register-btn" disabled={loading}>
+            {loading ? 'Đang đăng ký...' : 'Đăng ký'}
           </button>
         </form>
 

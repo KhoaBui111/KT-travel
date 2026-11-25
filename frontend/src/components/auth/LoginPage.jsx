@@ -2,17 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
-import { users } from '../../data/mockData';
+import { login } from '../../services/authService';
 import './LoginPage.css';
-
-// Danh sách email cũ mẫu cần loại bỏ hoàn toàn
-const DEPRECATED_EMAILS = [
-  'admin@kttravel.com',
-  'binh.tran@gmail.com',
-  'cuong.le@gmail.com',
-  'duc.pham@gmail.com',
-  'ha.hoang@gmail.com'
-];
 
 /**
  * LoginPage - Trang đăng nhập
@@ -24,102 +15,20 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const trimmedEmail = email.trim().toLowerCase();
-    const inputPassword = password;
-
-    // Chặn hoàn toàn các email mẫu cũ không còn sử dụng
-    if (DEPRECATED_EMAILS.includes(trimmedEmail)) {
-      alert('Tài khoản này không còn khả dụng trên hệ thống! Vui lòng kiểm tra lại thông tin hoặc đăng ký tài khoản mới.');
-      return;
-    }
-
-    // 1. Kiểm tra tài khoản Admin chính thức cố định buisolodmid@gmail.com
-    if (trimmedEmail === 'buisolodmid@gmail.com') {
-      const managedUsers = JSON.parse(localStorage.getItem('managedUsers') || 'null');
-      const managedAdmin = (managedUsers || []).find(
-        (u) => u.email?.toLowerCase() === 'buisolodmid@gmail.com'
-      );
-      const validPassword = managedAdmin?.password || '676767';
-
-      if (inputPassword !== validPassword && inputPassword !== '676767') {
-        alert('Mật khẩu không chính xác!');
-        return;
-      }
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userEmail', 'buisolodmid@gmail.com');
-      localStorage.setItem('userName', managedAdmin?.name || 'Bùi Solo Quản Trị Viên');
-      localStorage.setItem('userRole', 'admin');
-      window.dispatchEvent(new Event('authChange'));
-
+    // Backend kiểm tra email + mật khẩu (đã băm) trong bảng tai_khoan, trả token
+    setLoading(true);
+    try {
+      const user = await login(email.trim(), password);
       alert('Đăng nhập thành công!');
-      navigate('/admin/dashboard');
-      return;
-    }
-
-    // 2. Tìm kiếm trong danh sách tài khoản (managedUsers, users trong mockData, registeredUsers)
-    const rawManaged = JSON.parse(localStorage.getItem('managedUsers') || 'null');
-    const rawRegistered = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-
-    // Tự động dọn dẹp các email cũ khỏi cache nếu có
-    const cleanBaseUsers = (rawManaged || users).filter(
-      (u) => u.email && !DEPRECATED_EMAILS.includes(u.email.toLowerCase())
-    );
-    const cleanRegisteredUsers = rawRegistered.filter(
-      (r) => r.email && !DEPRECATED_EMAILS.includes(r.email.toLowerCase())
-    );
-
-    const allUsers = [
-      ...cleanBaseUsers,
-      ...cleanRegisteredUsers.filter(
-        (r) => !cleanBaseUsers.some((b) => b.email?.toLowerCase() === r.email?.toLowerCase())
-      )
-    ];
-
-    // Tìm kiếm tài khoản theo email (không phân biệt hoa thường)
-    const existingUser = allUsers.find(
-      (u) => u.email && u.email.toLowerCase() === trimmedEmail
-    );
-
-    if (!existingUser) {
-      alert('Tài khoản không tồn tại! Vui lòng kiểm tra lại thông tin hoặc đăng ký tài khoản mới.');
-      return;
-    }
-
-    // Kiểm tra tài khoản bị khóa
-    if (existingUser.status === 'locked') {
-      alert('⚠️ Tài khoản này hiện đang bị khóa! Vui lòng liên hệ ban quản trị để được hỗ trợ.');
-      return;
-    }
-
-    // Kiểm tra mật khẩu nếu tài khoản có mật khẩu
-    if (existingUser.password && existingUser.password !== inputPassword) {
-      alert('Mật khẩu không chính xác!');
-      return;
-    }
-
-    // Xác định vai trò (Role):
-    const isAdmin = existingUser.role === 'admin' || trimmedEmail.includes('admin');
-    const role = isAdmin ? 'admin' : 'user';
-    const name = existingUser.name || email.trim().split('@')[0];
-
-    // Lưu thông tin đăng nhập vào localStorage
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userEmail', existingUser.email || email.trim());
-    localStorage.setItem('userName', name);
-    localStorage.setItem('userRole', role);
-    window.dispatchEvent(new Event('authChange'));
-
-    alert('Đăng nhập thành công!');
-
-    // Điều hướng dựa trên vai trò
-    if (isAdmin) {
-      navigate('/admin/dashboard');
-    } else {
-      navigate('/');
+      navigate(user.role === 'admin' ? '/admin/dashboard' : '/');
+    } catch (err) {
+      alert(err.message); // vd: "Email hoặc mật khẩu không đúng."
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -188,8 +97,8 @@ const LoginPage = () => {
           </div>
 
           {/* Button đăng nhập */}
-          <button type="submit" className="login-btn">
-            Đăng nhập
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
           </button>
         </form>
 
